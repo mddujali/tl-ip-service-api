@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\Json\IpAddressNotFoundJsonException;
 use App\Http\Resources\Api\IpAddresses\IpAddressCollection;
+use App\Http\Resources\Api\IpAddresses\IpAddressResource;
 use App\Models\IpAddress;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class IpAddressController extends BaseController
 {
@@ -21,9 +25,35 @@ class IpAddressController extends BaseController
         //
     }
 
-    public function show(string $id)
+    public function show(Request $request)
     {
-        //
+        try {
+            $id = $request->route('ip_address_id');
+
+            $ipAddress = IpAddress::query()->find($id);
+
+            if (!$ipAddress) {
+                throw new IpAddressNotFoundJsonException();
+            }
+        } catch (Exception $exception) {
+            if ($exception instanceof IpAddressNotFoundJsonException) {
+                return $this->errorResponse(
+                    status: $exception->getStatus(),
+                    errorCode: $exception->getErrorCode(),
+                    message: $exception->getMessage(),
+                );
+            }
+
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                status: $status,
+                message: __('shared.common.' . $status),
+            );
+        }
+
+        return (new IpAddressResource($ipAddress))
+            ->setMessage(__('shared.common.success'));
     }
 
     public function update(Request $request, string $id)
