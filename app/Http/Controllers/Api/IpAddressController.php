@@ -70,8 +70,36 @@ class IpAddressController extends BaseController
             ->setMessage(__('shared.common.success'));
     }
 
-    public function update(Request $request, string $id)
+    public function update(SaveIpAddressRequest $request)
     {
-        //
+        try {
+            $id = $request->route('ip_address_id');
+
+            $ipAddress = IpAddress::query()->find($id);
+
+            if (!$ipAddress) {
+                throw new IpAddressNotFoundJsonException();
+            }
+
+            $ipAddress->update($request->validated());
+        } catch (Exception $exception) {
+            if ($exception instanceof IpAddressNotFoundJsonException) {
+                return $this->errorResponse(
+                    status: $exception->getStatus(),
+                    errorCode: $exception->getErrorCode(),
+                    message: $exception->getMessage(),
+                );
+            }
+
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                status: $status,
+                message: __('shared.common.' . $status),
+            );
+        }
+
+        return (new IpAddressResource($ipAddress))
+            ->setMessage(__('shared.common.success'));
     }
 }
