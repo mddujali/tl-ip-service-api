@@ -17,7 +17,7 @@ class GetIpAddressesTest extends BaseTestCase
         IpAddress::factory(100)->create();
     }
 
-    public function test_it_should_get_a_list_of_ip_addresses(): void
+    public function test_it_should_return_list_of_ip_addresses(): void
     {
         $response = $this->json(
             method: 'get',
