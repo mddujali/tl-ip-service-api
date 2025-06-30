@@ -3,20 +3,28 @@
 namespace Tests\Feature\Api\IpAddresses;
 
 use Generator;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Feature\Api\BaseTestCase;
 
 class StoreIpAddressTest extends BaseTestCase
 {
+    use WithoutMiddleware;
+
     #[DataProvider('invalidFieldsDataProvider')]
     public function test_it_should_return_invalid_fields($data): void
     {
+        $token = $this->generateToken();
+
         $response = $this->json(
             method: 'post',
             uri: route('api.ip-addresses.store'),
             data: $data,
-            headers: $this->headers
+            headers: [
+                ...$this->headers,
+                'Authorization' => 'Bearer ' . $token['data']['access_token'],
+            ]
         );
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -30,11 +38,16 @@ class StoreIpAddressTest extends BaseTestCase
     #[DataProvider('validFieldsDataProvider')]
     public function test_it_should_store_ip_address($data): void
     {
+        $token = $this->generateToken();
+
         $response = $this->json(
             method: 'post',
             uri: route('api.ip-addresses.store'),
             data: $data,
-            headers: $this->headers
+            headers: [
+                ...$this->headers,
+                'Authorization' => 'Bearer ' . $token['data']['access_token'],
+            ]
         );
 
         $response->assertStatus(Response::HTTP_CREATED);

@@ -4,20 +4,28 @@ namespace Tests\Feature\Api\IpAddresses;
 
 use App\Models\IpAddress;
 use Generator;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Http\Response;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\Feature\Api\BaseTestCase;
 
 class UpdateIpAddressTest extends BaseTestCase
 {
+    use WithoutMiddleware;
+
     #[DataProvider('invalidFieldsDataProvider')]
     public function test_it_should_return_invalid_fields($data): void
     {
+        $token = $this->generateToken();
+
         $response = $this->json(
             method: 'post',
             uri: route('api.ip-addresses.store'),
             data: $data,
-            headers: $this->headers
+            headers: [
+                ...$this->headers,
+                'Authorization' => 'Bearer ' . $token['data']['access_token'],
+            ]
         );
 
         $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -30,6 +38,7 @@ class UpdateIpAddressTest extends BaseTestCase
 
     public function test_it_should_update_ip_address(): void
     {
+        $token = $this->generateToken();
         $ipAddress = IpAddress::factory()->create();
 
         $data = [
@@ -42,7 +51,10 @@ class UpdateIpAddressTest extends BaseTestCase
             method: 'put',
             uri: route('api.ip-addresses.update', ['ip_address_id' => $ipAddress->id]),
             data: $data,
-            headers: $this->headers
+            headers: [
+                ...$this->headers,
+                'Authorization' => 'Bearer ' . $token['data']['access_token'],
+            ]
         );
 
         $response->assertStatus(Response::HTTP_OK);
