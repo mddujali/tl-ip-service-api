@@ -33,7 +33,7 @@ class IpAddressController extends BaseController
 
             return $this->errorResponse(
                 status: $status,
-                message: __('shared.common.' . $status),
+                message: __('shared.http.' . $status),
             );
         }
 
@@ -64,7 +64,7 @@ class IpAddressController extends BaseController
 
             return $this->errorResponse(
                 status: $status,
-                message: __('shared.common.' . $status),
+                message: __('shared.http.' . $status),
             );
         }
 
@@ -97,7 +97,7 @@ class IpAddressController extends BaseController
 
             return $this->errorResponse(
                 status: $status,
-                message: __('shared.common.' . $status),
+                message: __('shared.http.' . $status),
             );
         }
 
