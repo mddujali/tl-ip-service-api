@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Api\IpAddresses;
 
 use Generator;
@@ -11,58 +13,6 @@ use Tests\Feature\Api\BaseTestCase;
 class StoreIpAddressTest extends BaseTestCase
 {
     use WithoutMiddleware;
-
-    #[DataProvider('invalidFieldsDataProvider')]
-    public function test_it_should_return_invalid_fields($data): void
-    {
-        $token = $this->generateToken();
-
-        $response = $this->json(
-            method: 'post',
-            uri: route('api.ip-addresses.store'),
-            data: $data,
-            headers: [
-                ...$this->headers,
-                'Authorization' => 'Bearer ' . $token['data']['access_token'],
-            ]
-        );
-
-        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
-        $response->assertExactJsonStructure([
-            'message',
-            'error_code',
-            'errors',
-        ]);
-    }
-
-    #[DataProvider('validFieldsDataProvider')]
-    public function test_it_should_store_ip_address($data): void
-    {
-        $token = $this->generateToken();
-
-        $response = $this->json(
-            method: 'post',
-            uri: route('api.ip-addresses.store'),
-            data: $data,
-            headers: [
-                ...$this->headers,
-                'Authorization' => 'Bearer ' . $token['data']['access_token'],
-            ]
-        );
-
-        $response->assertStatus(Response::HTTP_CREATED);
-        $response->assertExactJsonStructure([
-            'message',
-            'data' => [
-                'id',
-                'ip_address',
-                'label',
-                'comment',
-                'created_at',
-                'updated_at',
-            ],
-        ]);
-    }
 
     public static function invalidFieldsDataProvider(): Generator
     {
@@ -118,5 +68,56 @@ class StoreIpAddressTest extends BaseTestCase
                 'comment' => fake()->sentence(),
             ],
         ];
+    }
+    #[DataProvider('invalidFieldsDataProvider')]
+    public function test_it_should_return_invalid_fields($data): void
+    {
+        $token = $this->generateToken();
+
+        $response = $this->json(
+            method: 'post',
+            uri: route('api.ip-addresses.store'),
+            data: $data,
+            headers: [
+                ...$this->headers,
+                'Authorization' => 'Bearer ' . $token['data']['access_token'],
+            ]
+        );
+
+        $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $response->assertExactJsonStructure([
+            'message',
+            'error_code',
+            'errors',
+        ]);
+    }
+
+    #[DataProvider('validFieldsDataProvider')]
+    public function test_it_should_store_ip_address($data): void
+    {
+        $token = $this->generateToken();
+
+        $response = $this->json(
+            method: 'post',
+            uri: route('api.ip-addresses.store'),
+            data: $data,
+            headers: [
+                ...$this->headers,
+                'Authorization' => 'Bearer ' . $token['data']['access_token'],
+            ]
+        );
+
+        $response->assertStatus(Response::HTTP_CREATED);
+        $response->assertExactJsonStructure([
+            'message',
+            'data' => [
+                'id',
+                'ip_address',
+                'label',
+                'comment',
+                'created_at',
+                'updated_at',
+            ],
+        ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Api\IpAddresses;
 
 use App\Models\IpAddress;
@@ -13,6 +15,42 @@ class UpdateIpAddressTest extends BaseTestCase
 {
     use WithoutMiddleware;
 
+    public static function invalidFieldsDataProvider(): Generator
+    {
+        yield 'Missing All fields' => [
+            [],
+        ];
+
+        yield 'Missing IP Address' => [
+            [
+                'label' => fake()->word(),
+                'comment' => fake()->sentence(),
+            ],
+        ];
+
+        yield 'Invalid IP Address' => [
+            [
+                'ip_address' => '123.456.789',
+                'label' => fake()->word(),
+                'comment' => fake()->sentence(),
+            ],
+        ];
+
+        yield 'Missing Label' => [
+            [
+                'ip_address' => fake()->ipv4(),
+                'comment' => fake()->sentence(),
+            ],
+        ];
+
+        yield 'Label too long' => [
+            [
+                'ip_address' => fake()->ipv4(),
+                'label' => str_repeat('a', 256),
+                'comment' => fake()->sentence(),
+            ],
+        ];
+    }
     #[DataProvider('invalidFieldsDataProvider')]
     public function test_it_should_return_invalid_fields($data): void
     {
@@ -69,42 +107,5 @@ class UpdateIpAddressTest extends BaseTestCase
                 'updated_at',
             ],
         ]);
-    }
-
-    public static function invalidFieldsDataProvider(): Generator
-    {
-        yield 'Missing All fields' => [
-            [],
-        ];
-
-        yield 'Missing IP Address' => [
-            [
-                'label' => fake()->word(),
-                'comment' => fake()->sentence(),
-            ],
-        ];
-
-        yield 'Invalid IP Address' => [
-            [
-                'ip_address' => '123.456.789',
-                'label' => fake()->word(),
-                'comment' => fake()->sentence(),
-            ],
-        ];
-
-        yield 'Missing Label' => [
-            [
-                'ip_address' => fake()->ipv4(),
-                'comment' => fake()->sentence(),
-            ],
-        ];
-
-        yield 'Label too long' => [
-            [
-                'ip_address' => fake()->ipv4(),
-                'label' => str_repeat('a', 256),
-                'comment' => fake()->sentence(),
-            ],
-        ];
     }
 }

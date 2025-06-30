@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Api;
 
 use App\Exceptions\Json\IpAddressNotFoundJsonException;
@@ -46,7 +48,7 @@ class IpAddressController extends BaseController
 
             $ipAddress = IpAddress::query()->find($id);
 
-            if (!$ipAddress) {
+            if ( ! $ipAddress) {
                 throw new IpAddressNotFoundJsonException();
             }
         } catch (Exception $exception) {
@@ -77,7 +79,7 @@ class IpAddressController extends BaseController
 
             $ipAddress = IpAddress::query()->find($id);
 
-            if (!$ipAddress) {
+            if ( ! $ipAddress) {
                 throw new IpAddressNotFoundJsonException();
             }
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature\Api\IpAddresses;
 
 use App\Models\IpAddress;
@@ -38,13 +40,13 @@ class GetIpAddressesTest extends BaseTestCase
             'message',
             'data' => [
                 '*' => [
-                        'id',
-                        'ip_address',
-                        'label',
-                        'comment',
-                        'created_at',
-                        'updated_at',
-                    ],
+                    'id',
+                    'ip_address',
+                    'label',
+                    'comment',
+                    'created_at',
+                    'updated_at',
+                ],
             ],
         ]);
     }
