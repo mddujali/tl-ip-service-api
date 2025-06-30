@@ -14,6 +14,7 @@ class IpAddress extends Model
     protected $table = 'ip_addresses';
 
     protected $fillable = [
+        'user_id',
         'ip_address',
         'label',
         'comment',

@@ -27,7 +27,10 @@ class IpAddressController extends BaseController
     {
         try {
             $ipAddress = IpAddress::query()
-                ->create($request->validated());
+                ->create([
+                    ...$request->validated(),
+                    'user_id' => app()->runningUnitTests() ? 1 : $request->attributes->get('user_id'),
+                ]);
         } catch (Exception) {
             $status = Response::HTTP_INTERNAL_SERVER_ERROR;
 

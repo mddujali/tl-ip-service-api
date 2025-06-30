@@ -20,6 +20,7 @@ class IpAddressTest extends BaseModelTestCase
 
         $this->columns = [
             'id',
+            'user_id',
             'ip_address',
             'label',
             'comment',
@@ -28,6 +29,7 @@ class IpAddressTest extends BaseModelTestCase
         ];
 
         $this->fillable = [
+            'user_id',
             'ip_address',
             'label',
             'comment',

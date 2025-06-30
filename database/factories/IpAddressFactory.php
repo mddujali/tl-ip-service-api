@@ -20,6 +20,7 @@ class IpAddressFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => 1,
             'ip_address' => $this->faker->ipv4(),
             'label' => $this->faker->word(),
             'comment' => $this->faker->sentence(),
