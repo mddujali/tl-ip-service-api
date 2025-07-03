@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\Role;
+use App\Exceptions\Json\HttpJsonException;
+use App\Exceptions\Json\IpAddressForbiddenJsonException;
 use App\Exceptions\Json\IpAddressNotFoundJsonException;
 use App\Http\Requests\Api\IpAddress\SaveIpAddressRequest;
 use App\Http\Resources\Api\IpAddresses\IpAddressCollection;
@@ -86,9 +89,14 @@ class IpAddressController extends BaseController
                 throw new IpAddressNotFoundJsonException();
             }
 
+            if ($request->input('user_id') !== $ipAddress->user_id
+                && $request->input('user_role') !== Role::SUPER_ADMIN->value) {
+                throw new IpAddressForbiddenJsonException(message: __('Editing IP Address is not allowed.'));
+            }
+
             $ipAddress->update($request->validated());
         } catch (Exception $exception) {
-            if ($exception instanceof IpAddressNotFoundJsonException) {
+            if ($exception instanceof HttpJsonException) {
                 return $this->errorResponse(
                     status: $exception->getStatus(),
                     errorCode: $exception->getErrorCode(),

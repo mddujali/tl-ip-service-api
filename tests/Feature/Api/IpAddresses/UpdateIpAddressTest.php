@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Api\IpAddresses;
 
+use App\Enums\Role;
 use App\Models\IpAddress;
 use Generator;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
@@ -30,6 +31,8 @@ class UpdateIpAddressTest extends BaseTestCase
 
         yield 'Invalid IP Address' => [
             [
+                'user_id' => 1,
+                'user_role' => Role::SUPER_ADMIN->value,
                 'ip_address' => '123.456.789',
                 'label' => fake()->word(),
                 'comment' => fake()->sentence(),
@@ -38,6 +41,8 @@ class UpdateIpAddressTest extends BaseTestCase
 
         yield 'Missing Label' => [
             [
+                'user_id' => 1,
+                'user_role' => Role::SUPER_ADMIN->value,
                 'ip_address' => fake()->ipv4(),
                 'comment' => fake()->sentence(),
             ],
@@ -45,6 +50,8 @@ class UpdateIpAddressTest extends BaseTestCase
 
         yield 'Label too long' => [
             [
+                'user_id' => 1,
+                'user_role' => Role::SUPER_ADMIN->value,
                 'ip_address' => fake()->ipv4(),
                 'label' => str_repeat('a', 256),
                 'comment' => fake()->sentence(),
@@ -80,6 +87,8 @@ class UpdateIpAddressTest extends BaseTestCase
         $ipAddress = IpAddress::factory()->create();
 
         $data = [
+            'user_id' => 1,
+            'user_role' => Role::SUPER_ADMIN->value,
             'ip_address' => fake()->ipv4(),
             'label' => fake()->word(),
             'comment' => fake()->sentence(),
