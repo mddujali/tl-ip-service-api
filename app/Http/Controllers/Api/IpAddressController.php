@@ -8,6 +8,7 @@ use App\Enums\Role;
 use App\Exceptions\Json\HttpJsonException;
 use App\Exceptions\Json\IpAddressForbiddenJsonException;
 use App\Exceptions\Json\IpAddressNotFoundJsonException;
+use App\Http\Requests\Api\IpAddress\DeleteIpAddressRequest;
 use App\Http\Requests\Api\IpAddress\SaveIpAddressRequest;
 use App\Http\Resources\Api\IpAddresses\IpAddressCollection;
 use App\Http\Resources\Api\IpAddresses\IpAddressResource;
@@ -114,5 +115,42 @@ class IpAddressController extends BaseController
 
         return (new IpAddressResource($ipAddress))
             ->setMessage(__('shared.common.success'));
+    }
+
+    public function destroy(DeleteIpAddressRequest $request)
+    {
+        try {
+            $id = $request->route('ip_address_id');
+
+            $ipAddress = IpAddress::query()->find($id);
+
+            if ( ! $ipAddress) {
+                throw new IpAddressNotFoundJsonException();
+            }
+
+            if ($request->input('user_id') !== $ipAddress->user_id
+                && $request->input('user_role') !== Role::SUPER_ADMIN->value) {
+                throw new IpAddressForbiddenJsonException(message: __('Deleting IP Address is not allowed.'));
+            }
+
+            $ipAddress->delete();
+        } catch (Exception $exception) {
+            if ($exception instanceof HttpJsonException) {
+                return $this->errorResponse(
+                    status: $exception->getStatus(),
+                    errorCode: $exception->getErrorCode(),
+                    message: $exception->getMessage(),
+                );
+            }
+
+            $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+
+            return $this->errorResponse(
+                status: $status,
+                message: __('shared.http.' . $status),
+            );
+        }
+
+        return $this->successResponse();
     }
 }
