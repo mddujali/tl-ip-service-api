@@ -63,7 +63,7 @@ class DeleteIpAddressTest extends BaseTestCase
 
                     'user_id' => 1,
                     'user_role' => 'super-admin',
-                    'ip_address_id' => $ipAddress->id
+                    'ip_address_id' => $ipAddress->id,
                 ]
             ),
             headers: [
